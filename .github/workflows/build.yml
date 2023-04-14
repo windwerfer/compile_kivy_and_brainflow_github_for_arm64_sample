@@ -35,6 +35,8 @@ jobs:
       - name: Compile brainflow
         run: |
           cd brainflow
+          ls
+          pwd
           cd tools
           python build.py
           cd ../python_package
