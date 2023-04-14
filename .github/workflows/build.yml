@@ -10,6 +10,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      # Add a step to check if buildozer.spec file is present
+      - name: Check for buildozer.spec file
+        run: |
+          if [ ! -f "buildozer.spec" ]; then
+            echo "Error: buildozer.spec file not found in the current directory."
+            exit 1
+          fi
+
       # used to cache dependencies with a timeout
       - name: Get Date
         id: get-date
@@ -28,23 +36,15 @@ jobs:
           path: .buildozer
           key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y python3-pip
-          sudo apt install -y python3-venv
-          python3 -m venv .venv
-          source .venv/bin/activate
-          pip install wheel
-
       - name: Build with Buildozer
-        run: |
-          source .venv/bin/activate
-          pip install buildozer
-          buildozer android debug
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          command: buildozer android debug
+          buildozer_version: master
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: package
-          path: ./bin
+          path: ${{ steps.buildozer.outputs.filename }}
