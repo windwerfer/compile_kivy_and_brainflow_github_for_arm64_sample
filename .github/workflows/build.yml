@@ -29,7 +29,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: brainflow-dev/brainflow
-          ref: main # specify the branch or commit you want to clone
+          ref: master # specify the branch or commit you want to clone
           path: brainflow # specify the destination directory where you want to clone
 
       - name: Compile brainflow
