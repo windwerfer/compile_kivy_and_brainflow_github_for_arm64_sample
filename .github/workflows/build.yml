@@ -19,7 +19,26 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install kivy
+          python -m pip install matplotlib ninja numpy cmake
 
-      - name: Check Kivy version
+      - name: Check Kivy version - working untill here
         run: |
           python -c "import kivy; print(f'Kivy version: {kivy.__version__}')"
+
+      - name: Clone brainflow repository
+        uses: actions/checkout@v2
+        with:
+          repository: brainflow-dev/brainflow
+          ref: main # specify the branch or commit you want to clone
+          path: brainflow # specify the destination directory where you want to clone
+
+      - name: Compile brainflow
+        run: |
+          cd brainflow
+          cd tools
+          python build.py
+          cd ../python_package
+          ls
+          python -m pip install -U .
+          python -c "import brainflow; "
+          # Add commands here to compile brainflow, e.g., ./configure, make, etc.
