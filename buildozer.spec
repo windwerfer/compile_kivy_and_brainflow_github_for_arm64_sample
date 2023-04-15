@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = My Application
+title = basicKivy
 
 # (str) Package name
-package.name = myapp
+package.name = myapp01
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.windwerfer
@@ -37,6 +37,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
+#requirements = python3,kivy
 requirements = python3,kivy,sdl2_ttf,pillow
 
 # (str) Custom source folders for requirements
@@ -301,7 +302,7 @@ android.allow_backup = True
 # Usage example : android.manifest_placeholders = [myCustomUrl:\"org.kivy.customurl\"]
 # android.manifest_placeholders = [:]
 
- (bool) Skip byte compile for .py files
+# (bool) Skip byte compile for .py files
 # android.no-byte-compile-python = False
 
 # (str) The format used to package the app for release mode (aab or apk or aar).
