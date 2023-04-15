@@ -2,6 +2,7 @@ import kivy.uix.boxlayout
 import kivy.uix.textinput
 import kivy.uix.label
 import kivy.uix.button
+from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds, BrainFlowPresets
 from kivy.app import App
 from kivy.uix.button import Button
 
@@ -10,7 +11,9 @@ from kivy.uix.button import Button
 class SimpleApp(kivy.app.App):
  def build(self):
   self.textInput = kivy.uix.textinput.TextInput()
-  self.label = kivy.uix.label.Label(text="Your Message.")
+  kver = kivy.__version__
+  bver = BoardShim.get_version()
+  self.label = kivy.uix.label.Label(text=f"Your Message. kivy {kver}. brainflow {bver}")
   self.button = kivy.uix.button.Button(text="Click Me.")
   self.button.bind(on_press=self.displayMessage)
   self.boxLayout = kivy.uix.boxlayout.BoxLayout(orientation="vertical")
