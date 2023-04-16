@@ -73,9 +73,15 @@ jobs:
           # venv works because it prepends $VIRTUAL_ENV to $PATH
           # to keep the variable: echo PATH=$PATH >> $GITHUB_ENV
           # or source the venv every run..
-          echo PATH=$PATH >> $GITHUB_ENV
-          echo VIRTUAL_ENV=$VIRTUAL_ENV >> $GITHUB_ENV
-          echo VIRTUAL_ENV_PROMPT=$VIRTUAL_ENV_PROMPT >> $GITHUB_ENV
+          #  there is also the option to add to $PATH through (will be loaded every run, 
+          #  but might be overridden by $GITHUB_ENV?)
+          #  echo "newPath" >> $GITHUB_PATH
+          # one way to retrieve var in $GITHUB_ENV is with:
+          #  echo "${{ env.someVariable }}" 
+          echo "PATH=$PATH" >> $GITHUB_ENV
+          echo "VIRTUAL_ENV=$VIRTUAL_ENV" >> $GITHUB_ENV
+          echo "VIRTUAL_ENV_PROMPT=$VIRTUAL_ENV_PROMPT" >> $GITHUB_ENV
+          echo "MYTEST1=heoooo" >> $GITHUB_ENV
           if [ "$VIRTUAL_ENV_PROMPT" == "" ]; then
             echo "no venv yet loaded"
           else
@@ -86,6 +92,7 @@ jobs:
 
       - name: Install venv & dependencies
         run: |
+          echo "testing env var mytest1: $MYTEST1"
           python -m pip install --upgrade pip
           python -m pip install "kivy[base,media]" kivy_examples
           python -m pip install matplotlib ninja numpy cmake
