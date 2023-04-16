@@ -29,48 +29,56 @@ jobs:
             ${{ runner.os }}-
 
       - if: ${{ steps.cache-buildozer.outputs.cache-hit != 'true' }}
-        name: create virtual env
+        name: 
         continue-on-error: true
         run: |
-          python -m venv ./.venv
-          source ./.venv/bin/activate
-          echo "currennt dir:"
-          pwd
-          ls -lA
-          # pip install -r requirements.txt
-
-        # - name: Set up Python
-        #   uses: actions/setup-python@v3
-        #   with:
-        #     python-version: 3.9
-        #     cache: pip, brainflow, kivy, kivy-Garden, kivy-examples, kiwisolver, ffpyplayer, matplotlib, ninja, numpy, cmake, pandas, cffi
+          echo "cache not found: do all the number crunching"
 
       # see if cache was found and run a check command
       - if: ${{ steps.cache-buildozer.outputs.cache-hit == 'true' }}
-        name: List contents of cache
+        name: cache found: List contents of cached dirs and pip
         continue-on-error: true
         run: |
-          source ./.venv/bin/activate
-          echo "----(venv) pip list---"
+          echo "currennt dir:"
+          pwd
+          ls -lA
+          echo "----pip list (NOT venv)---"
           pip list
           echo "----content of .buildozer---"
-          ls .buildozer
+          ls -lA .buildozer
+          echo "----content of .buildozer_global---"
+          ls -lA .buildozer_global
+          echo "----content of .venv----"
+          ls -lA .venv
           echo "----content of brainbay----"
-          ls brainflow
+          ls -lA brainflow
 
-      - name: Install dependencies
+      - name: pip venv start / create
+        run: |
+          if [ ! -d ".venv" ]; then
+            echo "create venv in .venv"
+            python -m venv ./.venv
+          els
+            echo "pip venv found in cached folder: .venv"
+          fi
+          source ./.venv/bin/activate
+          echo "(venv) pip list"
+          pip list
+
+      - name: Install venv & dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install "kivy[base,media]" kivy_examples
           python -m pip install matplotlib ninja numpy cmake
+          # pip install -r requirements.txt
 
-      - name: Check Kivy and brainflow version
+      - name: (venv) pip list & Kivy and brainflow details (last check before compiling)
         continue-on-error: true
         run: |
-          python -c "import kivy; print(f'Kivy version: {kivy.__version__}')"
-          echo "see if brainflow is still here"
-          ls -Al
-          echo "check if brainflow and kiwy can be found by 'pip show'"
+          echo "--pip list:"
+          pip list
+          #python -c "import kivy; print(f'Kivy version: {kivy.__version__}')"
+          echo "--pip show: kivy & brainflow"
           pip show brainflow kivy kivy-garden
 
           #  # if dir brainflow exists, this will just throw an error and give up
