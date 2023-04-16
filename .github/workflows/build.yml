@@ -10,11 +10,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # https://github.com/actions/setup-python#caching-packages-dependencies
+      # this will create a venv to be used with this job,
+      # it will be cache automatically and loaded for each run
       - uses: actions/setup-python@v4
+        name: create cachable pip venv (load/store automatically)
         with:
           python-version: "3.9"
           cache: "pip" # caching pip dependencies
-          cache-dependency-path: "requirements.txt"
+          cache-dependency-path: |
+            "requirements.txt"
+            "requirements_manually_installed.txt"
 
       # define a cache
       - name: load and define Cached folders
@@ -39,6 +45,11 @@ jobs:
         continue-on-error: true
         run: |
           echo "cache not found: do all the number crunching"
+          echo "currennt dir:"
+          pwd
+          ls -lA
+          echo "---- $VIRTUAL_ENV_PROMPT pip list (NOT venv?)--- VIRTUAL_ENV= $VIRTUAL_ENV "
+          pip list
 
       # see if cache was found and run a check command
       - if: ${{ steps.cache-buildozer.outputs.cache-hit == 'true' }}
@@ -59,49 +70,57 @@ jobs:
           ls -lA .buildozer
           echo "----content of .buildozer_global---"
           ls -lA .buildozer_global
-          echo "----content of .venv----"
-          ls -lA .venv
-          echo "----content of .venv/lib/python*/site-packages"
-          ls -lA .venv/lib/python*/site-packages/
+          # echo "----content of .venv----"
+          # ls -lA .venv
+          # echo "----content of .venv/lib/python*/site-packages"
+          # ls -lA .venv/lib/python*/site-packages/
           echo "----content of brainbay----"
           ls -lA brainflow
 
-      - name: pip venv start / create
-        run: |
-          #   if [ ! -d ".venv" ]; then
-          #     echo "create venv in .venv"
-          #     python -m venv ./.venv
-          #   else
-          #     echo "pip venv found in cached folder: .venv"
-          #   fi
-          #   source ./.venv/bin/activate
-          #   # every run starts a new bash, so variables like PATH will just be set new
-          #   # venv works because it prepends $VIRTUAL_ENV to $PATH
-          #   # to keep the variable: echo PATH=$PATH >> $GITHUB_ENV
-          #   # or source the venv every run..
-          #   #  there is also the option to add to $PATH through (will be loaded every run, 
-          #   #  but might be overridden by $GITHUB_ENV?)
-          #   #  echo "newPath" >> $GITHUB_PATH
-          #   # one way to retrieve var in $GITHUB_ENV is with:
-          #   #  echo "${{ env.someVariable }}" 
-          #   echo "PATH=$PATH" >> $GITHUB_ENV
-          #   echo "VIRTUAL_ENV=$VIRTUAL_ENV" >> $GITHUB_ENV
-          #   echo "VIRTUAL_ENV_PROMPT=$VIRTUAL_ENV_PROMPT" >> $GITHUB_ENV
-          #   echo "MYTEST1=heoooo" >> $GITHUB_ENV
-          if [ "$VIRTUAL_ENV_PROMPT" == "" ]; then
-            echo "no venv yet loaded"
-          else
-            echo "venv $VIRTUAL_ENV_PROMPT loaded from folder $VIRTUAL_ENV"
-          fi
-          echo "$VIRTUAL_ENV_PROMPT pip list"
-          pip list
+      #  # using buildin method now..
+      #  - name: pip venv start / create
+      #    run: |
+      #      if [ ! -d ".venv" ]; then
+      #        echo "create venv in .venv"
+      #        python -m venv ./.venv
+      #      else
+      #        echo "pip venv found in cached folder: .venv"
+      #      fi
+      #      source ./.venv/bin/activate
+      #      # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
+      #      # https://docs.github.com/en/actions/learn-github-actions/variables#passing-values-between-steps-and-jobs-in-a-workflow
+      #      # every run starts a new bash, so variables like PATH will just be set new
+      #      # venv works because it prepends $VIRTUAL_ENV to $PATH
+      #      # to keep the variable: echo PATH=$PATH >> $GITHUB_ENV
+      #      # or source the venv every run..
+      #      #  there is also the option to add to $PATH through (will be loaded every run,
+      #      #  but might be overridden by $GITHUB_ENV?)
+      #      #  echo "newPath" >> $GITHUB_PATH
+      #      # one way to retrieve var in $GITHUB_ENV is with:
+      #      #  echo "${{ env.someVariable }}"
+      #      echo "PATH=$PATH" >> $GITHUB_ENV
+      #      echo "VIRTUAL_ENV=$VIRTUAL_ENV" >> $GITHUB_ENV
+      #      echo "VIRTUAL_ENV_PROMPT=$VIRTUAL_ENV_PROMPT" >> $GITHUB_ENV
+      #      echo "MYTEST1=heoooo" >> $GITHUB_ENV
+      #      if [ "$VIRTUAL_ENV_PROMPT" == "" ]; then
+      #        echo "no venv yet loaded"
+      #      else
+      #        echo "venv $VIRTUAL_ENV_PROMPT loaded from folder $VIRTUAL_ENV"
+      #      fi
+      #      echo "$VIRTUAL_ENV_PROMPT pip list"
+      #      pip list
 
-      - name: Install venv & dependencies
+      # now done through the requirements.txt file
+      - name: pip install requirements / dependencies
         run: |
-          echo "testing env var mytest1: $MYTEST1"
-          python -m pip install --upgrade pip
-          python -m pip install "kivy[base,media]" kivy_examples
-          python -m pip install matplotlib ninja numpy cmake
+          echo "--pip list before---"
+          pip list
+          pip install -r "requirements.txt"
+          echo "--pip list after---"
+          pip list
+          # python -m pip install --upgrade pip
+          # python -m pip install "kivy[base,media]" kivy_examples
+          # python -m pip install matplotlib ninja numpy cmake
           # pip install -r requirements.txt
 
       - name: (venv) pip list & Kivy and brainflow details (last check before compiling)
@@ -156,11 +175,11 @@ jobs:
         continue-on-error: true
         run: |
           echo "$VIRTUAL_ENV_PROMPT pip show: kivy & brainflow        VIRTUAL_ENV= $VIRTUAL_ENV"
-          pip show brainflow kiwy kivy-garden
+          pip show brainflow kivy kivy-garden
           echo "$VIRTUAL_ENV_PROMPT pip list       VIRTUAL_ENV= $VIRTUAL_ENV"
           pip list
-          echo "----content of .venv/lib/python*/site-packages"
-          ls -lA .venv/lib/python*/site-packages/
+          # echo "----content of .venv/lib/python*/site-packages"
+          # ls -lA .venv/lib/python*/site-packages/
           echo "----list pip in requirements.txt syntax---"
           pip freeze
           #python -c "from brainflow.board_shim import BoardShim; print( 'Brainflow version: ' + BoardShim.get_version() )"
