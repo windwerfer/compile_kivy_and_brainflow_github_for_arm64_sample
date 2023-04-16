@@ -13,6 +13,7 @@ jobs:
       # https://github.com/actions/setup-python#caching-packages-dependencies
       # this will create a venv to be used with this job,
       # it will be cache automatically and loaded for each run
+      # the requirements file defines what packages will be cached, but will not install them
       - uses: actions/setup-python@v4
         name: create cachable pip venv (load/store automatically)
         with:
@@ -23,7 +24,7 @@ jobs:
             requirements_manually_installed.txt
 
       # define a cache
-      - name: load and define Cached folders
+      - name: load and store Cached folders (stores only if workflow build successfully)
         id: cache-buildozer
         uses: actions/cache@v3
         env:

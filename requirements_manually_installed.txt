@@ -1,1 +1,2 @@
-brainflow @ file:///root/brainflow-master/python_package
+# this package is not found through pip install and compiled+installed manually
+brainflow==0.0.1
