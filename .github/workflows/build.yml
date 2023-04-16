@@ -19,8 +19,8 @@ jobs:
           python-version: "3.9"
           cache: "pip" # caching pip dependencies
           cache-dependency-path: |
-            "requirements.txt"
-            "requirements_manually_installed.txt"
+            requirements.txt
+            requirements_manually_installed.txt
 
       # define a cache
       - name: load and define Cached folders
