@@ -18,42 +18,44 @@ jobs:
           cache-name: cache-buildozer-and-brainbay
         with:
           path: |
-            ~/.buildozer_global
-            ~/.buildozer
-            brainflow
-            ~/.venv
+            ./.buildozer_global
+            ./.buildozer
+            ./brainflow
+            ./.venv
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
-      # see if cache was found and run a check command
-      - if: ${{ steps.cache-buildozer.outputs.cache-hit == 'true' }}
-        name: List contents of cache
-        continue-on-error: true
-        run: |
-          ~/.venv/bin/activate
-          echo "----(venv) pip list---"
-          pip list
-          echo "----content of .buildozer---"
-          ls .buildozer
-          echo "----content of brainbay----"
-          ls brainbay
-
       - if: ${{ steps.cache-buildozer.outputs.cache-hit != 'true' }}
         name: create virtual env
         continue-on-error: true
         run: |
-          python -m venv ~/.venv
-          ~/.venv/bin/activate
-          pip install -r requirements.txt
+          python -m venv ./.venv
+          ./.venv/bin/activate
+          echo "currennt dir:"
+          pwd
+          # pip install -r requirements.txt
 
         # - name: Set up Python
         #   uses: actions/setup-python@v3
         #   with:
         #     python-version: 3.9
         #     cache: pip, brainflow, kivy, kivy-Garden, kivy-examples, kiwisolver, ffpyplayer, matplotlib, ninja, numpy, cmake, pandas, cffi
+
+      # see if cache was found and run a check command
+      - if: ${{ steps.cache-buildozer.outputs.cache-hit == 'true' }}
+        name: List contents of cache
+        continue-on-error: true
+        run: |
+          ./.venv/bin/activate
+          echo "----(venv) pip list---"
+          pip list
+          echo "----content of .buildozer---"
+          ls .buildozer
+          echo "----content of brainbay----"
+          ls brainflow
 
       - name: Install dependencies
         run: |
@@ -67,32 +69,41 @@ jobs:
           echo "see if brainflow is still here"
           ls -l
 
-      # if dir brainflow exists, this will just throw an error and give up
-      - name: Clone brainflow repository
-        continue-on-error: true
-        uses: actions/checkout@v3
-        with:
-          repository: brainflow-dev/brainflow
-          ref: master # specify the branch or commit you want to clone
-          path: brainflow # specify the destination directory where you want to clone
+          #  # if dir brainflow exists, this will just throw an error and give up
+          #  - name: Clone brainflow repository
+          #    continue-on-error: true
+          #    uses: actions/checkout@v3
+          #    with:
+          #      repository: brainflow-dev/brainflow
+          #      ref: master # specify the branch or commit you want to clone
+          #      path: brainflow # specify the destination directory where you want to clone
 
       - name: Compile brainflow
         run: |
-          cd brainflow
-          if [ -f "build/libBrainflow.a" ] && \
-             [ -f "build/libDSPFilters.a" ] && \
-             [ -f "build/libWaveLib.a" ] && \
-             [ -f "build/libkissfft-double.a" ]; then
-            # Run your command here
-            echo "All files exist, no need to comiple"
-          else
-            echo "One or more files are missing, removing build dir and run build.py"
+          if ! pip show brainflow; then
+            # download the sourcefiles
+            if [ ! -d "brainflow" ]; then
+              git clone --single-branch --branch master https://github.com/brainflow-dev/brainflow.git
+            fi
+            echo "brainflow is not installed. compiling and installing..."
+            cd brainflow
             rm build/* -rf
             cd tools
             python build.py
+            cd ../python_package
+            python -m pip install -U .
+          else
+            echo "brainflow is already installed. skip compiling."
           fi
-          cd ../python_package
-          python -m pip install -U .
+          # if [ -f "build/libBrainflow.a" ] && \
+          #    [ -f "build/libDSPFilters.a" ] && \
+          #    [ -f "build/libWaveLib.a" ] && \
+          #    [ -f "build/libkissfft-double.a" ]; then
+          #   # Run your command here
+          #   echo "All files exist, no need to comiple"
+          # else
+          #   echo "One or more files are missing, removing build dir and run build.py"
+          # fi
 
       - name: Check Brainflow version
         run: |
