@@ -12,16 +12,16 @@ jobs:
 
       # define a cache
       - name: Cache buildozer
-        id: cache-npm
+        id: cache-buildozer
         uses: actions/cache@v3
         env:
           cache-name: cache-buildozer-and-brainbay
         with:
-          # npm cache files are stored in `~/.npm` on Linux/macOS
           path: |
             ~/.buildozer_global
             ~/.buildozer
             brainflow
+            ~/.venv
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
@@ -29,25 +29,31 @@ jobs:
             ${{ runner.os }}-
 
       # see if cache was found and run a check command
-      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+      - if: ${{ steps.cache-buildozer.outputs.cache-hit == 'true' }}
         name: List contents of cache
         continue-on-error: true
         run: |
+          ~/.venv/bin/activate
+          echo "----(venv) pip list---"
+          pip list
           echo "----content of .buildozer---"
           ls .buildozer
           echo "----content of brainbay----"
           ls brainbay
 
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: 3.9
-          cache: pip, brainflow, kivy, kivy-Garden, kivy-examples, kiwisolver, ffpyplayer, matplotlib, ninja, numpy, cmake, pandas, cffi
-
-      - name: check if pip cacheing worked
+      - if: ${{ steps.cache-buildozer.outputs.cache-hit != 'true' }}
+        name: create virtual env
+        continue-on-error: true
         run: |
-          echo "pip list"
-          pip list
+          python -m venv ~/.venv
+          ~/.venv/bin/activate
+          pip install -r requirements.txt
+
+        # - name: Set up Python
+        #   uses: actions/setup-python@v3
+        #   with:
+        #     python-version: 3.9
+        #     cache: pip, brainflow, kivy, kivy-Garden, kivy-examples, kiwisolver, ffpyplayer, matplotlib, ninja, numpy, cmake, pandas, cffi
 
       - name: Install dependencies
         run: |
@@ -63,6 +69,7 @@ jobs:
 
       # if dir brainflow exists, this will just throw an error and give up
       - name: Clone brainflow repository
+        continue-on-error: true
         uses: actions/checkout@v3
         with:
           repository: brainflow-dev/brainflow
