@@ -22,7 +22,7 @@ jobs:
             .buildozer
             brainflow
             .venv
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('buildozer.spec') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
@@ -36,6 +36,7 @@ jobs:
           source ./.venv/bin/activate
           echo "currennt dir:"
           pwd
+          ls -lA
           # pip install -r requirements.txt
 
         # - name: Set up Python
@@ -67,7 +68,7 @@ jobs:
         run: |
           python -c "import kivy; print(f'Kivy version: {kivy.__version__}')"
           echo "see if brainflow is still here"
-          ls -l
+          ls -Al
 
           #  # if dir brainflow exists, this will just throw an error and give up
           #  - name: Clone brainflow repository
@@ -84,16 +85,19 @@ jobs:
             # download the sourcefiles
             if [ ! -d "brainflow" ]; then
               git clone --single-branch --branch master https://github.com/brainflow-dev/brainflow.git
+            else
+              echo "repository downloaded found in cache. go straight to comipling.. "
             fi
-            echo "brainflow is not installed. compiling and installing..."
+            echo "brainflow package not yet installed. compiling and installing..."
             cd brainflow
             rm build/* -rf
             cd tools
             python build.py
             cd ../python_package
             python -m pip install -U .
+            cd ../..
           else
-            echo "brainflow is already installed. skip compiling."
+            echo "brainflow package already installed. skip compiling."
           fi
           # if [ -f "build/libBrainflow.a" ] && \
           #    [ -f "build/libDSPFilters.a" ] && \
