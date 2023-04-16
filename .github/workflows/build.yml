@@ -42,7 +42,7 @@ jobs:
           echo "currennt dir:"
           pwd
           ls -lA
-          echo "----pip list (NOT venv)---"
+          echo "----pip list (NOT venv)--- VIRTUAL_ENV= $VIRTUAL_ENV "
           pip list
           echo "----content of .buildozer---"
           ls -lA .buildozer
@@ -64,7 +64,7 @@ jobs:
             echo "pip venv found in cached folder: .venv"
           fi
           source ./.venv/bin/activate
-          echo "(venv) pip list"
+          echo "(venv) pip list         VIRTUAL_ENV= $VIRTUAL_ENV"
           pip list
 
       - name: Install venv & dependencies
