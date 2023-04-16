@@ -65,7 +65,7 @@ jobs:
           if [ ! -d ".venv" ]; then
             echo "create venv in .venv"
             python -m venv ./.venv
-          els
+          else
             echo "pip venv found in cached folder: .venv"
           fi
           source ./.venv/bin/activate
