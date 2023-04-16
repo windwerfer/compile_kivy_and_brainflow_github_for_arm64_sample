@@ -20,8 +20,8 @@ jobs:
           path: |
             .buildozer_global
             .buildozer
-            brainflow
             .venv
+            brainflow
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('buildozer.spec') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
@@ -44,7 +44,7 @@ jobs:
           else
             echo "venv $VIRTUAL_ENV_PROMPT loaded from folder $VIRTUAL_ENV"
           fi
-          echo "\ncurrennt dir:"
+          echo "currennt dir:"
           pwd
           ls -lA
           echo "---- $VIRTUAL_ENV_PROMPT pip list (NOT venv?)--- VIRTUAL_ENV= $VIRTUAL_ENV "
@@ -69,6 +69,13 @@ jobs:
             echo "pip venv found in cached folder: .venv"
           fi
           source ./.venv/bin/activate
+          # every run starts a new bash, so variables like PATH will just be set new
+          # venv works because it prepends $VIRTUAL_ENV to $PATH
+          # to keep the variable: echo PATH=$PATH >> $GITHUB_ENV
+          # or source the venv every run..
+          echo PATH=$PATH >> $GITHUB_ENV
+          echo VIRTUAL_ENV=$VIRTUAL_ENV >> $GITHUB_ENV
+          echo VIRTUAL_ENV_PROMPT=$VIRTUAL_ENV_PROMPT >> $GITHUB_ENV
           if [ "$VIRTUAL_ENV_PROMPT" == "" ]; then
             echo "no venv yet loaded"
           else
