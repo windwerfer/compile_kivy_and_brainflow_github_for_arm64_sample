@@ -29,14 +29,14 @@ jobs:
             ${{ runner.os }}-
 
       - if: ${{ steps.cache-buildozer.outputs.cache-hit != 'true' }}
-        name: 
+        name:
         continue-on-error: true
         run: |
           echo "cache not found: do all the number crunching"
 
       # see if cache was found and run a check command
       - if: ${{ steps.cache-buildozer.outputs.cache-hit == 'true' }}
-        name: cache found: List contents of cached dirs and pip
+        name: cache found -> List contents of cached dirs and pip
         continue-on-error: true
         run: |
           echo "currennt dir:"
