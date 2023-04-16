@@ -50,6 +50,8 @@ jobs:
           ls -lA .buildozer_global
           echo "----content of .venv----"
           ls -lA .venv
+          echo "----content of .venv/lib/python*/site-packages"
+          ls -lA .venv/lib/python*/site-packages/
           echo "----content of brainbay----"
           ls -lA brainflow
 
