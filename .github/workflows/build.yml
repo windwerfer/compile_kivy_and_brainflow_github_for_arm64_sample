@@ -14,6 +14,7 @@ jobs:
         with:
           python-version: "3.9"
           cache: "pip" # caching pip dependencies
+          cache-dependency-path: "requirements.txt"
 
       # define a cache
       - name: load and define Cached folders
@@ -160,6 +161,8 @@ jobs:
           pip list
           echo "----content of .venv/lib/python*/site-packages"
           ls -lA .venv/lib/python*/site-packages/
+          echo "----list pip in requirements.txt syntax---"
+          pip freeze
           #python -c "from brainflow.board_shim import BoardShim; print( 'Brainflow version: ' + BoardShim.get_version() )"
 
       #---compile with buildozer
