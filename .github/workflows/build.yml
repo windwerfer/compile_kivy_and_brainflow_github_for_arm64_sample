@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v3
 
       # define a cache
-      - name: Cache buildozer
+      - name: load and define Cached folders
         id: cache-buildozer
         uses: actions/cache@v3
         env:
@@ -29,7 +29,7 @@ jobs:
             ${{ runner.os }}-
 
       - if: ${{ steps.cache-buildozer.outputs.cache-hit != 'true' }}
-        name:
+        name: cache not found
         continue-on-error: true
         run: |
           echo "cache not found: do all the number crunching"
@@ -39,10 +39,15 @@ jobs:
         name: cache found -> List contents of cached dirs and pip
         continue-on-error: true
         run: |
-          echo "currennt dir:"
+          if [ "$VIRTUAL_ENV_PROMPT" == "" ]; then
+            echo "no venv yet loaded"
+          else
+            echo "venv $VIRTUAL_ENV_PROMPT loaded from folder $VIRTUAL_ENV"
+          fi
+          echo "\ncurrennt dir:"
           pwd
           ls -lA
-          echo "----pip list (NOT venv)--- VIRTUAL_ENV= $VIRTUAL_ENV "
+          echo "---- $VIRTUAL_ENV_PROMPT pip list (NOT venv?)--- VIRTUAL_ENV= $VIRTUAL_ENV "
           pip list
           echo "----content of .buildozer---"
           ls -lA .buildozer
@@ -64,7 +69,12 @@ jobs:
             echo "pip venv found in cached folder: .venv"
           fi
           source ./.venv/bin/activate
-          echo "(venv) pip list         VIRTUAL_ENV= $VIRTUAL_ENV"
+          if [ "$VIRTUAL_ENV_PROMPT" == "" ]; then
+            echo "no venv yet loaded"
+          else
+            echo "venv $VIRTUAL_ENV_PROMPT loaded from folder $VIRTUAL_ENV"
+          fi
+          echo "$VIRTUAL_ENV_PROMPT pip list"
           pip list
 
       - name: Install venv & dependencies
@@ -77,7 +87,7 @@ jobs:
       - name: (venv) pip list & Kivy and brainflow details (last check before compiling)
         continue-on-error: true
         run: |
-          echo "--pip list:"
+          echo "--pip list: VIRTUAL_ENV= $VIRTUAL_ENV"
           pip list
           #python -c "import kivy; print(f'Kivy version: {kivy.__version__}')"
           echo "--pip show: kivy & brainflow"
@@ -95,13 +105,13 @@ jobs:
       - name: Compile brainflow
         run: |
           if ! pip show brainflow; then
+            echo "brainflow package not yet installed. compiling and installing..."
             # download the sourcefiles
             if [ ! -d "brainflow" ]; then
               git clone --single-branch --branch master https://github.com/brainflow-dev/brainflow.git
             else
-              echo "repository downloaded found in cache. go straight to comipling.. "
+              echo "already downloaded git repository found in cache. go straight to comipling.. "
             fi
-            echo "brainflow package not yet installed. compiling and installing..."
             cd brainflow
             rm build/* -rf
             cd tools
@@ -125,8 +135,13 @@ jobs:
       - name: Check Brainflow version
         continue-on-error: true
         run: |
-          python -c "from brainflow.board_shim import BoardShim; print( 'Brainflow version: ' + BoardShim.get_version() )"
+          echo "$VIRTUAL_ENV_PROMPT pip show: kivy & brainflow        VIRTUAL_ENV= $VIRTUAL_ENV"
           pip show brainflow kiwy kivy-garden
+          echo "$VIRTUAL_ENV_PROMPT pip list       VIRTUAL_ENV= $VIRTUAL_ENV"
+          pip list
+          echo "----content of .venv/lib/python*/site-packages"
+          ls -lA .venv/lib/python*/site-packages/
+          #python -c "from brainflow.board_shim import BoardShim; print( 'Brainflow version: ' + BoardShim.get_version() )"
 
       #---compile with buildozer
 
