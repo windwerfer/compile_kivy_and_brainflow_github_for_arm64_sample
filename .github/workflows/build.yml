@@ -61,13 +61,13 @@ jobs:
           echo "see if brainflow is still here"
           ls -l
 
+      # if dir brainflow exists, this will just throw an error and give up
       - name: Clone brainflow repository
         uses: actions/checkout@v3
         with:
           repository: brainflow-dev/brainflow
           ref: master # specify the branch or commit you want to clone
           path: brainflow # specify the destination directory where you want to clone
-        if: "! -d brainflow"
 
       - name: Compile brainflow
         run: |

@@ -38,6 +38,8 @@ version = 0.1
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
 #requirements = python3,kivy
+#find all required packages with
+#  pip show kivy kivy-garden kivy-examples brainflow pygments | grep Requires
 requirements = python3,kivy,sdl2_ttf,pillow,brainflow
 
 # (str) Custom source folders for requirements
