@@ -8,7 +8,8 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2        with:
+        uses: actions/checkout@v2
+        with:
           node-version: 16 # Specify the desired Node.js version
 
       - name: Set up Python
@@ -22,9 +23,11 @@ jobs:
           python -m pip install kivy
           python -m pip install matplotlib ninja numpy cmake
 
-      - name: Check Kivy version - working untill here
+      - name: Check Kivy version
         run: |
           python -c "import kivy; print(f'Kivy version: {kivy.__version__}')"
+          echo "see if brainflow is still here"
+          ls -l
 
       - name: Clone brainflow repository
         uses: actions/checkout@v2
@@ -36,15 +39,14 @@ jobs:
       - name: Compile brainflow
         run: |
           cd brainflow
-          ls
-          pwd
           cd tools
           python build.py
           cd ../python_package
-          ls
           python -m pip install -U .
-          python -c "import brainflow; "
-          # Add commands here to compile brainflow, e.g., ./configure, make, etc.
+
+      - name: Check Brainflow version
+        run: |
+          python -c "from brainflow.board_shim import BoardShim; print( 'Brainflow version: ' + BoardShim.get_version() )"
 
       #---compile with buildozer
 
