@@ -10,15 +10,49 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # define a cache
+      - name: Cache buildozer
+        id: cache-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-buildozer-and-brainbay
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: |
+            ~/.buildozer_global
+            ~/.buildozer
+            brainflow
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      # see if cache was found and run a check command
+      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+        name: List contents of cache
+        continue-on-error: true
+        run: |
+          echo "----content of .buildozer---"
+          ls .buildozer
+          echo "----content of brainbay----"
+          ls brainbay
+
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: 3.8
+          python-version: 3.9
+          cache: pip, brainflow, kivy, kivy-Garden, kivy-examples, kiwisolver, ffpyplayer, matplotlib, ninja, numpy, cmake, pandas, cffi
+
+      - name: check if pip cacheing worked
+        run: |
+          echo "pip list"
+          pip list
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install kivy
+          python -m pip install "kivy[base,media]" kivy_examples
           python -m pip install matplotlib ninja numpy cmake
 
       - name: Check Kivy version
@@ -33,12 +67,23 @@ jobs:
           repository: brainflow-dev/brainflow
           ref: master # specify the branch or commit you want to clone
           path: brainflow # specify the destination directory where you want to clone
+        if: "! -d brainflow"
 
       - name: Compile brainflow
         run: |
           cd brainflow
-          cd tools
-          python build.py
+          if [ -f "build/libBrainflow.a" ] && \
+             [ -f "build/libDSPFilters.a" ] && \
+             [ -f "build/libWaveLib.a" ] && \
+             [ -f "build/libkissfft-double.a" ]; then
+            # Run your command here
+            echo "All files exist, no need to comiple"
+          else
+            echo "One or more files are missing, removing build dir and run build.py"
+            rm build/* -rf
+            cd tools
+            python build.py
+          fi
           cd ../python_package
           python -m pip install -U .
 
@@ -47,24 +92,6 @@ jobs:
           python -c "from brainflow.board_shim import BoardShim; print( 'Brainflow version: ' + BoardShim.get_version() )"
 
       #---compile with buildozer
-
-      # used to cache dependencies with a timeout
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "date=$(date -u "+%Y%m%d")" >> $GITHUB_ENV
-        shell: bash
-
-      - name: Cache Buildozer global directory
-        uses: actions/cache@v3
-        with:
-          path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }} # Replace with your path
-
-      - uses: actions/cache@v3
-        with:
-          path: .buildozer
-          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
 
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
