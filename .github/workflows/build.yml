@@ -64,11 +64,14 @@ jobs:
           python -m pip install "kivy[base,media]" kivy_examples
           python -m pip install matplotlib ninja numpy cmake
 
-      - name: Check Kivy version
+      - name: Check Kivy and brainflow version
+        continue-on-error: true
         run: |
           python -c "import kivy; print(f'Kivy version: {kivy.__version__}')"
           echo "see if brainflow is still here"
           ls -Al
+          echo "check if brainflow and kiwy can be found by 'pip show'"
+          pip show brainflow kivy kivy-garden
 
           #  # if dir brainflow exists, this will just throw an error and give up
           #  - name: Clone brainflow repository
@@ -110,13 +113,15 @@ jobs:
           # fi
 
       - name: Check Brainflow version
+        continue-on-error: true
         run: |
           python -c "from brainflow.board_shim import BoardShim; print( 'Brainflow version: ' + BoardShim.get_version() )"
+          pip show brainflow kiwy kivy-garden
 
       #---compile with buildozer
 
       - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
+        uses: ArtemSBulgakov/buildozer-action@v3
         id: buildozer
         with:
           command: buildozer android debug
