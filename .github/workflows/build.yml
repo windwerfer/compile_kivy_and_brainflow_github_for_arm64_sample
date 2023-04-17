@@ -194,6 +194,27 @@ jobs:
           command: buildozer android debug
           buildozer_version: master
 
+      # remove all prev arefacts (otherwise the artefacts quota might be triggered -its monthly)
+      - name: Delete Old Artifacts
+        uses: actions/github-script@v6
+        id: artifact
+        with:
+          script: |
+            const res = await github.rest.actions.listArtifactsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            })
+
+            res.data.artifacts
+              .forEach(({ id }) => {
+                github.rest.actions.deleteArtifact({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  artifact_id: id,
+                })
+              })
+
+      # create the output apk for uploading
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
