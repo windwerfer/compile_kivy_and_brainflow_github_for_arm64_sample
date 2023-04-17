@@ -17,13 +17,11 @@ class SimpleApp(kivy.app.App):
              for i in installed_packages])
         # print(installed_packages_list)
         merged_string = '\n'.join([' '.join(pair) for pair in installed_packages_list])
-
-        scrlv = ScrollView(do_scroll_x=False)
-        self.textInput = kivy.uix.textinput.TextInput(text=merged_string, size_hint=(1, None), height=max(self.minimum_height, scrlv.height))
+        self.textInput = kivy.uix.textinput.TextInput(text=merged_string)
 
         # Wrap the TextInput object in a ScrollView
-        # scroll_view = ScrollView(do_scroll_x=False, size_hint=(1, None), height=300, bar_width=10, scroll_type=['bars'])
-        scrlv.add_widget(self.textInput)
+        # scroll_view = ScrollView(do_scroll_x=False )
+        # scroll_view.add_widget(self.textInput)
         
         # kver = kivy.__version__
         # bver = BoardShim.get_version()
@@ -31,7 +29,7 @@ class SimpleApp(kivy.app.App):
         self.button = kivy.uix.button.Button(text="Click Me.")
         self.button.bind(on_press=self.displayMessage)
         self.boxLayout = kivy.uix.boxlayout.BoxLayout(orientation="vertical")
-        self.boxLayout.add_widget(scroll_view)
+        self.boxLayout.add_widget(self.textInput)
         self.boxLayout.add_widget(self.label)
         self.boxLayout.add_widget(self.button)
         return self.boxLayout
