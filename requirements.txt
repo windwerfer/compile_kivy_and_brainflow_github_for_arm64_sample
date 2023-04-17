@@ -46,6 +46,6 @@ tzdata==2023.3
 urllib3==1.26.15
 urwid==2.1.2
 urwid-readline==0.13
-buildozer
-Cython==0.29.33
-virtualenv
+#buildozer
+#Cython==0.29.33
+#virtualenv

@@ -50,7 +50,7 @@ jobs:
         with:
           path: |
             .buildozer_global
-            # .buildozer
+            # .buildozer  # not recommended to cache->python packages will not be updated
             #.venv
             brainflow
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('buildozer.spec') }}
@@ -213,8 +213,8 @@ jobs:
           pip freeze
           #python -c "from brainflow.board_shim import BoardShim; print( 'Brainflow version: ' + BoardShim.get_version() )"
 
-      ---compile with buildozer
-
+       #---compile with buildozer
+       # tips & tricks https://github.com/ArtemSBulgakov/buildozer-action
        - name: Build with Buildozer
          uses: ArtemSBulgakov/buildozer-action@v1
          id: buildozer
@@ -246,6 +246,8 @@ jobs:
       #         })
 
       # create the output apk for uploading
+      # if quota is reached https://github.com/ArtemSBulgakov/buildozer-action explains how 
+      # to push it to a branch instead
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
