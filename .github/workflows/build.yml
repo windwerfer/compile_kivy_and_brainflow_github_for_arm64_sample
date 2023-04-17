@@ -220,7 +220,7 @@ jobs:
         id: buildozer
         with:
           # command: echo "run before, eg load venv" ; buildozer android debug
-          command: buildozer android debug
+          command: echo "------?venv?--$PATH" ; pip list ; buildozer android debug ; echo "------?venv?--$PATH" ; pip list
           buildozer_version: master
 
       # remove all prev arefacts (otherwise the artefacts quota might be triggered -its monthly)
@@ -247,8 +247,11 @@ jobs:
       # create the output apk for uploading
       # if quota is reached https://github.com/ArtemSBulgakov/buildozer-action explains how
       # to push it to a branch instead
+      - name: Set current date as env variable
+        run: echo "NOW=$(date +'%Y.%m.%d_%H%M')" >> $GITHUB_ENV
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: mykivy-${{ github.event.head_commit.message }}-$(date +'%Y.%m.%d_%H%M')
+          name: "mykivy-${{ github.event.head_commit.message }}-${{ env.NOW }}"
           path: ${{ steps.buildozer.outputs.filename }}
