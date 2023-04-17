@@ -40,7 +40,7 @@ version = 0.1
 #requirements = python3,kivy
 #find all required packages with
 #  pip show kivy kivy-garden kivy-examples brainflow pygments | grep Requires
-requirements = python3,kivy,sdl2_ttf,pillow,brainflow
+requirements = python3,kivy,docutils,Kivy-Garden,pygments, brainflow,nptyping,numpy,typish,  sdl2_ttf,pillow
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes

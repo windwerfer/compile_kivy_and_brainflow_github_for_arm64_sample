@@ -136,6 +136,15 @@ jobs:
           # python -m pip install matplotlib ninja numpy cmake
           # pip install -r requirements.txt
 
+      - name: try to install brainflow from cache
+        continue-on-error: true
+        run: |
+          echo "--pip list before---"
+          pip list
+          pip install -r "requirements_manually_installed.txt"
+          echo "--pip list after---"
+          pip list
+
       - name: (venv) pip list & Kivy and brainflow details (last check before compiling)
         continue-on-error: true
         run: |
