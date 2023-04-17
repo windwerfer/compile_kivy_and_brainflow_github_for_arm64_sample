@@ -246,5 +246,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: package
+          name: mykivy-${{ github.event.head_commit.message }}-$(date +'%Y.%m.%d_%H%M')
           path: ${{ steps.buildozer.outputs.filename }}

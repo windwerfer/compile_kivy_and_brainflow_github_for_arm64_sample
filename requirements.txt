@@ -47,3 +47,4 @@ urllib3==1.26.15
 urwid==2.1.2
 urwid-readline==0.13
 buildozer
+cython
