@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v3
 
       # https://github.com/actions/setup-python#caching-packages-dependencies
-      # this will create a venv to be used with this job,
+      # this will create a venv to be used with this job, #
       # it will be cache automatically and loaded for each run
       # the requirements file defines what packages will be cached, but will not install them
       # - uses: actions/setup-python@v4
