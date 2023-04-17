@@ -40,7 +40,7 @@ version = 0.1
 #requirements = python3,kivy
 #find all required packages with
 #  pip show kivy kivy-garden kivy-examples brainflow pygments | grep Requires
-requirements = python3,kivy,docutils,Kivy-Garden,pygments, brainflow,nptyping,numpy,typish,  sdl2_ttf,pillow
+requirements = python3,kivy,docutils,Kivy-Garden,pygments, brainflow_arm64,nptyping,numpy,typish,  sdl2_ttf,pillow
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -333,7 +333,7 @@ android.allow_backup = True
 #p4a.source_dir =
 
 # (str) The directory in which python-for-android should look for your own build recipes (if any)
-#p4a.local_recipes =
+p4a.local_recipes = ./brainflow_arm64_recipe/
 
 # (str) Filename to the hook for p4a
 #p4a.hook =

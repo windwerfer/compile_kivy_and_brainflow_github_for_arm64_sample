@@ -220,7 +220,7 @@ jobs:
         id: buildozer
         with:
           # command: echo "run before, eg load venv" ; buildozer android debug
-          command: echo "------?venv?--$PATH" ; pip list ; buildozer android debug ; echo "------?venv?--$PATH" ; pip list
+          command: buildozer android debug
           buildozer_version: master
 
       # remove all prev arefacts (otherwise the artefacts quota might be triggered -its monthly)
