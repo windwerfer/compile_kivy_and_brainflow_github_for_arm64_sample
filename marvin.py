@@ -23,6 +23,7 @@ BoxLayout:
                     height: '30dp'
                 ScrollView:
                     id: scrlv
+                    size_hint_y: 1  # Set fixed height for the ScrollView
                     TextInput:
                         id: my_text_input
                         text: 'disp_text'

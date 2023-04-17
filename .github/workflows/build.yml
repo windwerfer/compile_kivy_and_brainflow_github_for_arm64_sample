@@ -209,12 +209,17 @@ jobs:
 
       #---compile with buildozer
 
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
-        with:
-          command: buildozer android debug
-          buildozer_version: master
+      # - name: Build with Buildozer
+      #   uses: ArtemSBulgakov/buildozer-action@v1
+      #   id: buildozer
+      #   with:
+      #     command: buildozer android debug
+      #     buildozer_version: master
+
+      - name: Activate venv and build with Buildozer
+        run: |
+          # source <path-to-your-venv>/bin/activate
+          python -m buildozer android debug
 
       # remove all prev arefacts (otherwise the artefacts quota might be triggered -its monthly)
       # or set to public repo (maybe need to wait a while untill github updated the stats)
