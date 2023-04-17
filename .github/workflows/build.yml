@@ -41,7 +41,6 @@ jobs:
       #     sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev aidl
       #     sudo apt install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
 
-
       # define a cache
       - name: load and store Cached folders (stores only if workflow build successfully)
         id: cache-buildozer
@@ -214,17 +213,15 @@ jobs:
           pip freeze
           #python -c "from brainflow.board_shim import BoardShim; print( 'Brainflow version: ' + BoardShim.get_version() )"
 
-
-       #---compile with buildozer
-       # tips & tricks https://github.com/ArtemSBulgakov/buildozer-action
-       - name: Build with Buildozer
-         uses: ArtemSBulgakov/buildozer-action@v1
-         id: buildozer
-         with:
-           # command: echo "run before, eg load venv" ; buildozer android debug
-           command: buildozer android debug
-           buildozer_version: master
-
+      #---compile with buildozer
+      # tips & tricks https://github.com/ArtemSBulgakov/buildozer-action
+      - name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          # command: echo "run before, eg load venv" ; buildozer android debug
+          command: buildozer android debug
+          buildozer_version: master
 
       # remove all prev arefacts (otherwise the artefacts quota might be triggered -its monthly)
       # or set to public repo (maybe need to wait a while untill github updated the stats)
@@ -248,7 +245,7 @@ jobs:
       #         })
 
       # create the output apk for uploading
-      # if quota is reached https://github.com/ArtemSBulgakov/buildozer-action explains how 
+      # if quota is reached https://github.com/ArtemSBulgakov/buildozer-action explains how
       # to push it to a branch instead
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
