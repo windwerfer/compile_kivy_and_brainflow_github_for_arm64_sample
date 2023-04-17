@@ -213,6 +213,7 @@ jobs:
           pip freeze
           #python -c "from brainflow.board_shim import BoardShim; print( 'Brainflow version: ' + BoardShim.get_version() )"
 
+
        #---compile with buildozer
        # tips & tricks https://github.com/ArtemSBulgakov/buildozer-action
        - name: Build with Buildozer
