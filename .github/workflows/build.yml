@@ -34,6 +34,11 @@ jobs:
       #     cache-dependency-path: |
       #       requirements.txt
       #       requirements_manually_installed.txt
+      - name: install ubuntu packages for buildozer
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential git python3 python3-pip zlib1g-dev openjdk-8-jdk autoconf libtool pkg-config zlib1g-dev libffi-dev libssl-dev -y
+          sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev -y
 
       # define a cache
       - name: load and store Cached folders (stores only if workflow build successfully)
