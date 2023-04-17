@@ -2,7 +2,7 @@ import kivy.uix.boxlayout
 import kivy.uix.textinput
 import kivy.uix.label
 import kivy.uix.button
-# from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds, BrainFlowPresets
+from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds, BrainFlowPresets
 from kivy.app import App
 from kivy.uix.button import Button
 
