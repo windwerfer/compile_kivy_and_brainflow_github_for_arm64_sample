@@ -256,7 +256,7 @@ jobs:
         id: buildozer
         with:
           # command: echo "run before, eg load venv" ; buildozer android debug
-          command: buildozer android debug
+          command: echo "xxuxx pip packages" ; pip list ; pip installl setuptools ; buildozer android_new debug ; pip list
           buildozer_version: master
 
       # remove all prev arefacts (otherwise the artefacts quota might be triggered -its monthly)
