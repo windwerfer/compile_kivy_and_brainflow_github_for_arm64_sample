@@ -22,26 +22,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # https://github.com/actions/setup-python#caching-packages-dependencies
-      # this will create a venv to be used with this job, #
-      # it will be cache automatically and loaded for each run
-      # the requirements file defines what packages will be cached, but will not install them
-      # - uses: actions/setup-python@v4
-      #   name: create cachable pip venv (load/store automatically)
-      #   with:
-      #     python-version: "3.9"
-      #     cache: "pip" # caching pip dependencies
-      #     cache-dependency-path: |
-      #       requirements.txt
-      #       requirements_manually_installed.txt
+      #https://github.com/actions/setup-python#caching-packages-dependencies
+      # (only caches the downloaded python package files, will run the pip install command again)
+      #it will be cache automatically and loaded for each build
+      #the requirements file defines what packages will be cached, but will not install them
+      #pip install has to be called in a separate run
+      - uses: actions/setup-python@v4
+        name: create download cache for pip packages (load/store automatically)
+        with:
+          python-version: "3.9"
+          cache: "pip" # caching pip dependencies
+          cache-dependency-path: |
+            requirements.txt
+            #requirements_manually_installed.txt
 
+      # #not needed if ArtemSBulgakov/buildozer-action@v1 is used
       # - name: install ubuntu packages for buildozer
       #   run: |
       #     sudo apt update
       #     sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev aidl
       #     sudo apt install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
 
-      # define a cache
+      # define a cache (this really speeds up the build 40min->5min)
       - name: load and store Cached main folders (stores only if workflow build successfully)
         id: cache-buildozer
         uses: actions/cache@v3
@@ -61,7 +63,7 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
-      # define a cache
+      # define a 2nd cache (that i can remove separately)
       - name: load and store Cached .buildozer (local) folders
         id: cache-buildozer-local
         uses: actions/cache@v3
@@ -81,6 +83,7 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
+      # checking how things are setup.. i am new to github actions
       - if: ${{ steps.cache-buildozer.outputs.cache-hit != 'true' }}
         name: cache not found
         continue-on-error: true
@@ -92,7 +95,7 @@ jobs:
           echo "---- $VIRTUAL_ENV_PROMPT pip list (NOT venv?)--- VIRTUAL_ENV= $VIRTUAL_ENV "
           pip list
 
-      # see if cache was found and run a check command
+      # see if cache was found and run a check command (just because i am curous)
       - if: ${{ steps.cache-buildozer.outputs.cache-hit == 'true' }}
         name: cache found -> List contents of cached dirs and pip
         continue-on-error: true
@@ -118,7 +121,10 @@ jobs:
           echo "----content of brainbay----"
           ls -lA brainflow
 
-      #  # using buildin method now..
+      #   #  # second (quicker) cache python modumethod:
+      #   #  it will create a venv in projectHome/.venv and load it
+      #   #  the trick is to cache (filecache like from id: cache-buildozer) the .venv directory
+      #   #  so it will be available on the next run
       #  - name: pip venv start / create
       #    run: |
       #      if [ ! -d ".venv" ]; then
@@ -128,31 +134,35 @@ jobs:
       #        echo "pip venv found in cached folder: .venv"
       #      fi
       #      source ./.venv/bin/activate
+      #
+      #
+      #      # to make it work:
+      #      # -each run starts a new bash (envirorment variables will be reset)
+      #      #   so you eather have to call source ./.venv/bin/activate on each run
+      #      #   or save the envirorment variables to $GITHUB_ENV
       #      # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
       #      # https://docs.github.com/en/actions/learn-github-actions/variables#passing-values-between-steps-and-jobs-in-a-workflow
-      #      # every run starts a new bash, so variables like PATH will just be set new
       #      # venv works because it prepends $VIRTUAL_ENV to $PATH
       #      # to keep the variable: echo PATH=$PATH >> $GITHUB_ENV
-      #      # or source the venv every run..
-      #      #  there is also the option to add to $PATH through (will be loaded every run,
-      #      #  but might be overridden by $GITHUB_ENV?)
-      #      #  echo "newPath" >> $GITHUB_PATH
       #      # one way to retrieve var in $GITHUB_ENV is with:
       #      #  echo "${{ env.someVariable }}"
       #      echo "PATH=$PATH" >> $GITHUB_ENV
       #      echo "VIRTUAL_ENV=$VIRTUAL_ENV" >> $GITHUB_ENV
       #      echo "VIRTUAL_ENV_PROMPT=$VIRTUAL_ENV_PROMPT" >> $GITHUB_ENV
-      #      echo "MYTEST1=heoooo" >> $GITHUB_ENV
+      #
+      #      # echo "MYTEST1=heoooo" >> $GITHUB_ENV
       #      if [ "$VIRTUAL_ENV_PROMPT" == "" ]; then
       #        echo "no venv yet loaded"
       #      else
       #        echo "venv $VIRTUAL_ENV_PROMPT loaded from folder $VIRTUAL_ENV"
+      #        echo "PATH is: $PATH"
       #      fi
       #      echo "$VIRTUAL_ENV_PROMPT pip list"
       #      pip list
+      #
 
-      #      # now done through the requirements.txt file
-      #      # seems like buildozer ignores all locally installed packages and downloads them again
+      #      # this run would bulid with buildozer without ArtemSBulgakov/buildozer-action@v1
+      #      # just for testing.. didnt compile (dependecies?) but could work..
       #      - name: pip install requirements / dependencies
       #        run: |
       #          echo "--pip list before---"
@@ -164,16 +174,8 @@ jobs:
       #          # python -m pip install "kivy[base,media]" kivy_examples
       #          # python -m pip install matplotlib ninja numpy cmake
       #          # pip install -r requirements.txt
-      #
-      #      - name: try to install brainflow from cache
-      #        continue-on-error: true
-      #        run: |
-      #          echo "--pip list before---"
-      #          pip list
-      #          pip install -r "requirements_manually_installed.txt"
-      #          echo "--pip list after---"
-      #          pip list
-      #
+
+      #      # for debugging, to see if venv runs + if all packages are installed
       #      - name: (venv) pip list & Kivy and brainflow details (last check before compiling)
       #        continue-on-error: true
       #        run: |
@@ -182,16 +184,22 @@ jobs:
       #          #python -c "import kivy; print(f'Kivy version: {kivy.__version__}')"
       #          echo "--pip show: kivy & brainflow"
       #          pip show brainflow kivy kivy-garden
-      #
-      #          #  # if dir brainflow exists, this will just throw an error and give up
-      #          #  - name: Clone brainflow repository
-      #          #    continue-on-error: true
-      #          #    uses: actions/checkout@v3
-      #          #    with:
-      #          #      repository: brainflow-dev/brainflow
-      #          #      ref: master # specify the branch or commit you want to clone
-      #          #      path: brainflow # specify the destination directory where you want to clone
-      #
+
+      #  ----compile brainflow--
+
+      #      # if dir brainflow exists, this will just throw an error and give up
+      #      # but i used the git clone varient from below in the end
+      #      - name: Clone brainflow repository
+      #        continue-on-error: true
+      #        uses: actions/checkout@v3
+      #        with:
+      #          repository: brainflow-dev/brainflow
+      #          ref: master # specify the branch or commit you want to clone
+      #          path: brainflow # specify the destination directory where you want to clone
+
+      #      # compiles and installes brainflow, but for x86_64 not for arm64
+      #      # in the end, i compiled it on my tablet with termux and proot
+      #      #  (with an installed xfce4 and termux-x11 as a x server to run kivy - opengl works)
       #      - name: Compile brainflow
       #        run: |
       #          if ! pip show brainflow; then
@@ -221,7 +229,10 @@ jobs:
       #          # else
       #          #   echo "One or more files are missing, removing build dir and run build.py"
       #          # fi
-      #
+
+      #---brainflow compile ends---
+
+      #      # check if everything worked
       #      - name: Check Brainflow version
       #        continue-on-error: true
       #        run: |
@@ -239,7 +250,6 @@ jobs:
       #---compile with buildozer
       # tips & tricks https://github.com/ArtemSBulgakov/buildozer-action
       # Using pip 23.1 from /github/workspace/.buildozer/android/platform/build-arm64-v8a_armeabi-v7a/build/venv/lib/python3.9/site-packages/pip (python 3.9)
-      #
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
         continue-on-error: true
@@ -251,6 +261,7 @@ jobs:
 
       # remove all prev arefacts (otherwise the artefacts quota might be triggered -its monthly)
       # or set to public repo (maybe need to wait a while untill github updated the stats)
+      # but i use gh cli now to remove all artefacts at once
       # - name: Delete Old Artifacts
       #   uses: actions/github-script@v6
       #   id: artifact
