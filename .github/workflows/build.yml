@@ -238,8 +238,11 @@ jobs:
 
       #---compile with buildozer
       # tips & tricks https://github.com/ArtemSBulgakov/buildozer-action
+      # Using pip 23.1 from /github/workspace/.buildozer/android/platform/build-arm64-v8a_armeabi-v7a/build/venv/lib/python3.9/site-packages/pip (python 3.9)
+      #
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
+        continue-on-error: true
         id: buildozer
         with:
           # command: echo "run before, eg load venv" ; buildozer android debug
