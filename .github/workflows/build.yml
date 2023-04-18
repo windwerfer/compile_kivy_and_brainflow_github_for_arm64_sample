@@ -161,19 +161,19 @@ jobs:
       #      pip list
       #
 
-      #      # this run would bulid with buildozer without ArtemSBulgakov/buildozer-action@v1
-      #      # just for testing.. didnt compile (dependecies?) but could work..
-      #      - name: pip install requirements / dependencies
-      #        run: |
-      #          echo "--pip list before---"
-      #          pip list
-      #          pip install -r "requirements.txt"
-      #          echo "--pip list after---"
-      #          pip list
-      #          # python -m pip install --upgrade pip
-      #          # python -m pip install "kivy[base,media]" kivy_examples
-      #          # python -m pip install matplotlib ninja numpy cmake
-      #          # pip install -r requirements.txt
+      # this run would bulid with buildozer without ArtemSBulgakov/buildozer-action@v1
+      # just for testing.. didnt compile (dependecies?) but could work..
+      - name: pip install requirements / dependencies
+        run: |
+          echo "--pip list before---"
+          pip list
+          pip install -r "requirements.txt"
+          echo "--pip list after---"
+          pip list
+          # python -m pip install --upgrade pip
+          # python -m pip install "kivy[base,media]" kivy_examples
+          # python -m pip install matplotlib ninja numpy cmake setuptools
+          # pip install -r requirements.txt
 
       #      # for debugging, to see if venv runs + if all packages are installed
       #      - name: (venv) pip list & Kivy and brainflow details (last check before compiling)
