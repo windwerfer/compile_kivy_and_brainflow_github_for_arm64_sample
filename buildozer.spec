@@ -40,7 +40,22 @@ version = 0.1
 #requirements = python3,kivy
 #find all required packages with
 #  pip show kivy kivy-garden kivy-examples brainflow pygments | grep Requires
-requirements = python3,setuptools,wheel,kivy,docutils,Kivy-Garden,pygments, nptyping,numpy,typish,  sdl2_ttf,pillow,cmake,clang,brainflow==9.9.9
+requirements = python3,
+setuptools,
+wheel,
+kivy,
+docutils,
+Kivy-Garden,
+pygments,
+nptyping,
+numpy,
+typish,
+sdl2_ttf,
+pillow,
+cmake,
+cython,
+https://raw.githubusercontent.com/windwerfer/compile_kivy_and_brainflow_github_for_arm64_sample/main/p4a-recipes/brainflow/brainflow-9.9.9-py3-none-any.whl'
+
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -333,7 +348,7 @@ android.allow_backup = True
 #p4a.source_dir =
 
 # (str) The directory in which python-for-android should look for your own build recipes (if any)
-p4a.local_recipes = ./p4a-recipes/
+#p4a.local_recipes = ./p4a-recipes/
 
 # (str) Filename to the hook for p4a
 #p4a.hook =
