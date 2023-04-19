@@ -119,7 +119,7 @@ jobs:
           # echo "----content of .venv/lib/python*/site-packages"
           # ls -lA .venv/lib/python*/site-packages/
           echo "----content of brainbay----"
-          ls -lA brainflow
+          # ls -lA brainflow
 
       #   #  # second (quicker) cache python modumethod:
       #   #  it will create a venv in projectHome/.venv and load it

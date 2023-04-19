@@ -40,10 +40,8 @@ version = 0.1
 #requirements = python3,kivy
 #find all required packages with
 #  pip show kivy kivy-garden kivy-examples brainflow pygments | grep Requires
-requirements = #python3,
-#setuptools,
-#wheel,
-kivy,
+#requirements = python3,setuptools,wheel,
+requirements = kivy,nptyping,numpy,https://raw.githubusercontent.com/windwerfer/compile_kivy_and_brainflow_github_for_arm64_sample/main/p4a-recipes/brainflow/brainflow-9.9.9-py3-none-any.whl
 #docutils,
 #Kivy-Garden,
 #pygments,
@@ -54,7 +52,7 @@ kivy,
 #pillow,
 #cmake,
 #cython,
-https://raw.githubusercontent.com/windwerfer/compile_kivy_and_brainflow_github_for_arm64_sample/main/p4a-recipes/brainflow/brainflow-9.9.9-py3-none-any.whl'
+#https://raw.githubusercontent.com/windwerfer/compile_kivy_and_brainflow_github_for_arm64_sample/main/p4a-recipes/brainflow/brainflow-9.9.9-py3-none-any.whl'
 
 
 # (str) Custom source folders for requirements
