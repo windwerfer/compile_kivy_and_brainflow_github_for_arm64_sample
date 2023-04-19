@@ -7,7 +7,6 @@ import kivy.uix.button
 from kivy.app import App
 from kivy.uix.button import Button
 
-import pkg_resources
 
 
 class SimpleApp(kivy.app.App):
