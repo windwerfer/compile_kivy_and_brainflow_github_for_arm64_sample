@@ -41,7 +41,7 @@ version = 0.1
 #find all required packages with
 #  pip show kivy kivy-garden kivy-examples brainflow pygments | grep Requires
 #requirements = python3,setuptools,wheel,
-requirements = python3,kivy,nptyping,numpy,https://raw.githubusercontent.com/windwerfer/compile_kivy_and_brainflow_github_for_arm64_sample/main/p4a-recipes/brainflow/brainflow-9.9.9-py3-none-any.whl
+requirements = python3,kivy,nptyping,numpy,https://raw.githubusercontent.com/windwerfer/compile_kivy_and_brainflow_github_for_arm64_sample/main/p4a-recipes/brainflow/brainflow-9.9.9-py3-none-any.whl,pkg_resources
 #docutils,
 #Kivy-Garden,
 #pygments,
