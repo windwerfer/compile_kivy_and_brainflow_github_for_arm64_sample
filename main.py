@@ -3,7 +3,7 @@ import kivy.uix.textinput
 from kivy.uix.scrollview import ScrollView
 import kivy.uix.label
 import kivy.uix.button
-#from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds, BrainFlowPresets
+from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds, BrainFlowPresets
 from kivy.app import App
 from kivy.uix.button import Button
 
