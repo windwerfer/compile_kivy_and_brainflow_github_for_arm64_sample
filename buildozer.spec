@@ -43,7 +43,7 @@ version = 0.1
 #requirements = python3,setuptools,wheel,
 #   as much as i can guess: python3 is the version that will be packed,
 #   python host is the version under which buildozer will run/compile
-requirements = python3==3.10.6, hostpython3==3.10.6, sqlite3, kivy, requests, kivymd, pydantic,   nptyping,typish,numpy,pkg_resources,typing_extensions,https://raw.githubusercontent.com/windwerfer/compile_kivy_and_brainflow_github_for_arm64_sample/main/p4a-recipes/brainflow/brainflow-9.9.9-py3-none-any.whl
+requirements = python3, sqlite3, kivy, requests, kivymd, pydantic,   nptyping,typish,numpy,pkg_resources,typing_extensions,https://raw.githubusercontent.com/windwerfer/compile_kivy_and_brainflow_github_for_arm64_sample/main/p4a-recipes/brainflow/brainflow-9.9.9-py3-none-any.whl
 
 
 # (str) Custom source folders for requirements
