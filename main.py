@@ -7,20 +7,23 @@ import kivy.uix.button
 from kivy.app import App
 from kivy.uix.button import Button
 
+
+import sys
 import pkg_resources
+
 
 class SimpleApp(kivy.app.App):
     def build(self):
-        installed_packages = pkg_resources.working_set
-        installed_packages_list = sorted(["%s==%s" % (i.key, i.version)
-             for i in installed_packages])
-        # print(installed_packages_list)
-        merged_string = '\n'.join([' '.join(pair) for pair in installed_packages_list])
-        self.textInput = kivy.uix.textinput.TextInput(text=merged_string)
+        li = []
+        # Get a list of all installed packages
+        # packages = pkg_resources.working_set
+        packages = sorted(pkg_resources.working_set, key=lambda p: p.project_name.lower())
 
-        # Wrap the TextInput object in a ScrollView
-        # scroll_view = ScrollView(do_scroll_x=False )
-        # scroll_view.add_widget(self.textInput)
+        for package in packages:
+            li.append(f"{package.project_name} == {package.version}")
+            # print(package.key, package.version)
+        merged_string = 'python version ' + str(sys.version_info)+ '\n' + '\n'.join(li)
+        self.textInput = kivy.uix.textinput.TextInput(text=merged_string)
         
         # kver = kivy.__version__
         # bver = BoardShim.get_version()
