@@ -1,3 +1,4 @@
+# works if cached, time to build with cache: 4min, without: 
 import kivy.uix.boxlayout
 import kivy.uix.textinput
 from kivy.uix.scrollview import ScrollView
