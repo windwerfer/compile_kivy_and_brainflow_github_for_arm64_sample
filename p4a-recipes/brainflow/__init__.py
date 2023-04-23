@@ -1,3 +1,5 @@
+#not used any more..
+#just add the package url directly to the requirements option in buildozer.spec
 from pythonforandroid.recipe import PythonRecipe
 
 class BrainflowRecipe(PythonRecipe):
